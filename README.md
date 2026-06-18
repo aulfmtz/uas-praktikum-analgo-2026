@@ -67,7 +67,7 @@ Kami membandingkan 2 pendekatan algoritmik yang bertolak belakang untuk menganal
 ## 5. Ringkasan Hasil Uji
 
 Hasil pengujian eksekusi terminal CLI untuk kedua skenario tersimpan secara detail di folder docs:
-..................
+/docs/screenshot_output.png
 
 ### Tabel Komparasi Utama ($N = 13$):
 
