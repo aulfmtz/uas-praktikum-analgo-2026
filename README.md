@@ -93,12 +93,12 @@ Tabel di bawah ini merupakan komparasi metrik finansial dan algoritmik (*N = 11*
 
 | Metrik | GREEDY (Heuristik) | ACO (Metaheuristik) | DFS PRUNING (Eksak) |
 | :--- | :---: | :---: | :---: |
-| **Jarak Total (km)** | [ISI_ANGKA] km | [ISI_ANGKA] km | [ISI_ANGKA] km |
-| **Bensin Habis (Liter)** | [ISI_ANGKA] L | [ISI_ANGKA] L | [ISI_ANGKA] L |
-| **Waktu Running (ms)** | [ISI_ANGKA] ms | [ISI_ANGKA] ms | [ISI_ANGKA] ms |
-| **Biaya Server (Rp 50/ms)**| Rp [ISI_ANGKA] | Rp [ISI_ANGKA] | Rp [ISI_ANGKA] |
-| **TCO Subsidi (BBM Rp5.000)**| Rp [ISI_ANGKA] | Rp [ISI_ANGKA] | Rp [ISI_ANGKA] |
-| **TCO Krisis (BBM Rp20.000)**| Rp [ISI_ANGKA] | Rp [ISI_ANGKA] | Rp [ISI_ANGKA] |
+| **Jarak Total (km)** | 46 km | 3 km | 46 km |
+| **Bensin Habis (Liter)** | 0.9982 L | 0.9982 L | 0.9982 L |
+| **Waktu Running (ms)** | 0.0534 ms | 31.7187 ms | 10.5426 ms |
+| **Biaya Server (Rp 50/ms)**| Rp 2.67 | Rp 1,585.94| Rp 527.13 |
+| **TCO Subsidi (BBM Rp5.000)**| Rp 4,993.58 | Rp 6,576.84 | Rp 5,518.04 |
+| **TCO Krisis (BBM Rp20.000)**| Rp 19,966.31 | Rp 21,549 | Rp 20,490.77 |
 
 *Catatan: Rumus rasio bensin dieksekusi secara dinamis di setiap pergerakan rute mengikuti formula:*
 *Rasio = Rasio Kosong + ( (Rasio Penuh - Rasio Kosong) * (Beban Saat Ini / Beban Total) )*
@@ -110,9 +110,9 @@ Tabel di bawah ini merupakan komparasi metrik finansial dan algoritmik (*N = 11*
 Berdasarkan kalkulasi *Total Cost of Ownership* (TCO), rekomendasi arsitektur algoritma bagi manajemen logistik adalah sebagai berikut:
 
 1.  **Skenario BBM Bersubsidi (Rp 5.000 / Liter):**
-    Manajemen direkomendasikan untuk menggunakan **[PILIH_NAMA_ALGORITMA_DENGAN_TCO_TERENDAH]**. Pada harga BBM yang murah, penghematan bensin yang ditawarkan oleh algoritma Eksak tidak mampu menutupi melonjaknya tagihan sewa *Cloud Server* akibat tingginya waktu komputasi eksekusi rute.
+    Manajemen direkomendasikan untuk menggunakan **ACO**. Pada harga BBM yang murah, penghematan bensin yang ditawarkan oleh algoritma Eksak tidak mampu menutupi melonjaknya tagihan sewa *Cloud Server* akibat tingginya waktu komputasi eksekusi rute.
 2.  **Skenario Krisis BBM (Rp 20.000 / Liter):**
-    Saat harga BBM melambung tinggi, perusahaan direkomendasikan beralih ke **[PILIH_NAMA_ALGORITMA_DENGAN_TCO_TERENDAH]**. Jika selisih tagihan komputasi server *DFS Pruning* atau *ACO* jauh lebih rendah dibandingkan potensi penghematan harga BBM harian, maka investasi pada waktu komputasi menjadi sangat masuk akal secara finansial.
+    Saat harga BBM melambung tinggi, perusahaan direkomendasikan beralih ke **ACO**. Jika selisih tagihan komputasi server *DFS Pruning* atau *ACO* jauh lebih rendah dibandingkan potensi penghematan harga BBM harian, maka investasi pada waktu komputasi menjadi sangat masuk akal secara finansial.
 3.  **Analisis Titik Impas (Break-Even Point):**
     Transisi *upgrade* arsitektur server ke algoritma DFS Pruning hanya akan menguntungkan apabila harga BBM menembus perhitungan berikut:
     
