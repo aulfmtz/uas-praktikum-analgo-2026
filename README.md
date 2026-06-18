@@ -15,11 +15,9 @@ Program ini dikembangkan menggunakan **Python+**.
 
 ### Perintah Eksekusi CLI
 Jalankan program dari direktori utama dengan memilih salah satu skenario ekonomi berikut:
-
-    ```bash
-    python src/program.py 
-    ```
-
+```bash
+python src/program.py 
+```
 ---
 
 ## 2. Deskripsi Data & Model Input
