@@ -16,7 +16,6 @@ Program ini dikembangkan menggunakan **Python+**.
 ### Perintah Eksekusi CLI
 Jalankan program dari direktori utama dengan memilih salah satu skenario ekonomi berikut:
 
-1.  **Menjalankan Skenario Subsidi BBM (Harga BBM Rp 5.000 / Liter):**
     ```bash
     python src/program.py 
     ```
