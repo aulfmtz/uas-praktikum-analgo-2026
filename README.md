@@ -30,7 +30,7 @@ Bagian ini memodelkan data geografis dan berat logistik pengiriman barang secara
 ### Skenario Geografis:
 Dataset memodelkan rute pengantaran kurir di daerah perkotaan Bandung yang terdiri atas **1 Gudang Pusat (Hub)** dan **10 Pelanggan** (Total 11 Titik).
 *   **Hub (Indeks 0):** Gudang Pusat (Awal & Akhir rute).
-*   **Pelanggan (Indeks 1 - 12):** Daerah......
+*   **Customer (Indeks 1 - 12)** 
 
 ### Struktur File CSV 
 * `data/berat_paket.csv`:
@@ -41,24 +41,19 @@ Dataset memodelkan rute pengantaran kurir di daerah perkotaan Bandung yang terdi
 
 ## 3. Pemilihan Algoritma 
 
-Kami membandingkan dua pendekatan algoritmik yang bertolak belakang untuk menganalisis trade-off antara efisiensi BBM dan biaya komputasi:
+Kami membandingkan tiga pendekatan algoritmik (2 heuristik dan 1 eksak) yang bertolak belakang untuk menganalisis trade-off antara efisiensi BBM dan biaya komputasi:
 
-### A. Algoritma Heuristik Dasar: Greedy (Nearest Neighbor)
+### A. Algoritma Heuristik Dasar: Greedy 
 *   **Modul:** [src/programGreedy.py](/src/programGreedy.py)
-* **Alasan:** Pendekatan paling intuitif. Kurir selalu memilih destinasi terdekat berikutnya dari lokasinya saat ini.
-* **Trade-off:** Kecepatan eksekusi sangat instan, namun mengorbankan kualitas rute. Sangat rentan terjebak pada kondisi sub-optimal karena menyisakan rute panjang di akhir perjalanan.
+* **Trade-off:** Dengan algoritma ini, kurir akan selalu memilih destinasi terdekat berikutnya dari lokasinya saat ini sehingga kecepatan eksekusi cepat, namun kemungkinan menghasilkan hasil yang tidak optimal.
 
 ### B. Algoritma Metaheuristik: Ant Colony Optimization (ACO)
 *   **Modul:** [src/programACO.py](/src/programACO.py)
-*   **Alasan:** Mensimulasikan perilaku koloni semut menggunakan jejak feromon dan probabilitas (*Roulette Wheel Selection*) untuk mengeksplorasi ruang pencarian rute secara cerdas.
-*   **Trade-off:** Mampu menghasilkan rute yang jauh lebih optimal dari Greedy, namun memerlukan waktu komputasi yang lebih lama karena mensimulasikan banyak semut dalam puluhan iterasi.
+*   **Trade-off:** Algoritma ini lebih pintar dari Greedy karena ikut mempertimbangkan jejak rute yang sukses di masa lalu (seperti semut) untuk mencari konsumsi bensin paling hemat. Hasil akhirnya jauh lebih optimal, tapi waktu komputasinya menjadi sedikit lebih lambat karena program harus mensimulasikan pergerakan puluhan semut virtual secara berulang.
 
-### C. Algoritma Eksak: DFS
+### C. Algoritma Eksak: DFS Pruning
 *   **Modul:** [src/programEksak.py](/src/programEksak.py)
-*   **Alasan:** Algoritma fundamental yang menjamin ditemukannya rute terpendek secara mutlak (*Global Optimum*).
-*   **Trade-off:** Kompleksitas waktu yang sangat berat. Implementasi pemangkasan (*Pruning*) wajib diterapkan untuk menghentikan penelusuran cabang graf yang       biayanya sudah terbukti melebihi *best distance* sementara.
-
----
+*   **Trade-off:** Algoritma ini mengecek setiap kemungkinan kombinasi jalur sehingga dijamin pasti menemukan rute dengan konsumsi bensin paling murah secara absolut, tetapi kekurangannya yaitu waktu eksekusi yang sangat lambat. Meskipun sudah dibantu teknik pruning untuk memotong pengecekan pada cabang rute yang terbukti boros, eksekusinya tetap memakan biaya server yang paling mahal.
 
 ## 4. Analisis Kompleksitas (Big-O)
 
@@ -93,12 +88,12 @@ Tabel di bawah ini merupakan komparasi metrik finansial dan algoritmik (*N = 11*
 
 | Metrik | GREEDY (Heuristik) | ACO (Metaheuristik) | DFS PRUNING (Eksak) |
 | :--- | :---: | :---: | :---: |
-| **Jarak Total (km)** | 46 km | 3 km | 46 km |
+| **Jarak Total (km)** | 46 km | 46 km | 46 km |
 | **Bensin Habis (Liter)** | 0.9982 L | 0.9982 L | 0.9982 L |
-| **Waktu Running (ms)** | 0.0534 ms | 31.7187 ms | 10.5426 ms |
-| **Biaya Server (Rp 50/ms)**| Rp 2.67 | Rp 1,585.94| Rp 527.13 |
-| **TCO Subsidi (BBM Rp5.000)**| Rp 4,993.58 | Rp 6,576.84 | Rp 5,518.04 |
-| **TCO Krisis (BBM Rp20.000)**| Rp 19,966.31 | Rp 21,549 | Rp 20,490.77 |
+| **Waktu Running (ms)** | 0.0314 ms | 18.9548 ms | 6.4638 ms |
+| **Biaya Server (Rp 50/ms)**| Rp 1.57 | Rp 947.74| Rp 323.19 |
+| **TCO Subsidi (BBM Rp5.000)**| Rp 4,993.48 | Rp 5,938.65 | Rp 5,314.10 |
+| **TCO Krisis (BBM Rp20.000)**| Rp 19,965.21 | Rp 20,911.38 | Rp 20,286.83 |
 
 *Catatan: Rumus rasio bensin dieksekusi secara dinamis di setiap pergerakan rute mengikuti formula:*
 *Rasio = Rasio Kosong + ( (Rasio Penuh - Rasio Kosong) * (Beban Saat Ini / Beban Total) )*
