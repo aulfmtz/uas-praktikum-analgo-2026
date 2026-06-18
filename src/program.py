@@ -4,7 +4,6 @@ import math
 import os
 
 from programGreedy import Greedy
-from programACO import ACO
 from programEksak import Eksak
 
 BIAYA_SERVER_PER_MS = 50.0
@@ -56,7 +55,6 @@ def load_data(jarak_file, berat_file, skenario_file):
                 if matrix[i][k] + matrix[k][j] < matrix[i][j]:
                     matrix[i][j] = matrix[i][k] + matrix[k][j]
 
-    # Pastikan jarak dari sebuah lokasi ke dirinya sendiri selalu 0
     for i in range(n):
         matrix[i][i] = 0.0
 
@@ -95,8 +93,7 @@ def main():
 
 
     daftar_algoritma = [
-        ("GREEDY (Heuristik Cepat)", Greedy(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG)),
-        ("ACO (Metaheuristik)", ACO(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG, num_ants=20, iterations=50)),
+        ("GREEDY (Heuristik)", Greedy(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG)),
         ("DFS PRUNING (Eksak)", Eksak(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG))
     ]
 
@@ -122,7 +119,8 @@ def main():
         print(f"BBM Terpakai  : {total_fuel:.4f} Liter")
         print("----------------------------------------------------------")
 
-        for nama_skenario, harga_bbm in skenario.items():
+        for nama_skenario in skenario:
+            harga_bbm = skenario[nama_skenario]
             biaya_bbm = total_fuel * harga_bbm
             tco = biaya_komputasi + biaya_bbm
             print(f"[{nama_skenario.upper()}] - Harga BBM Rp {harga_bbm:,.0f}/L")
