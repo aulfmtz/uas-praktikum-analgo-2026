@@ -68,13 +68,14 @@ Kami membandingkan 2 pendekatan algoritmik yang bertolak belakang untuk menganal
 
 Hasil pengujian eksekusi terminal CLI untuk kedua skenario tersimpan secara detail di folder docs:
 /docs/screenshot_output.png
+![Screenshot Output Terminal](docs/screenshot_output.png)
 
-### Tabel Komparasi Utama ($N = 13$):
+### Tabel Komparasi Utama :
 
 Tabel di bawah ini merupakan komparasi metrik finansial dan algoritmik (*N = 11*):
 
 | Metrik | GREEDY (Heuristik) | DFS PRUNING (Eksak) |
-| :--- | :---: | :---: | :---: |
+| :--- | :---: | :---: |
 | **Jarak Total (km)** | 46 km | 46 km |
 | **Bensin Habis (Liter)** | 0.9982 L | 0.9982 L |
 | **Waktu Running (ms)** | 0.0253 ms | 6.1015 ms |
@@ -85,6 +86,8 @@ Tabel di bawah ini merupakan komparasi metrik finansial dan algoritmik (*N = 11*
 *Catatan: Rumus rasio bensin dieksekusi secara dinamis di setiap pergerakan rute mengikuti formula:*
 *Rasio = Rasio Kosong + ( (Rasio Penuh - Rasio Kosong) * (Beban Saat Ini / Beban Total) )*
 
+### Visualisasi Hasil
+![Grafik Komparasi](docs/visualization_output.png)
 ---
 
 ## 6. Kesimpulan Keputusan Bisnis
