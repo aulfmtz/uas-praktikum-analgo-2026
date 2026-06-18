@@ -5,7 +5,7 @@ import os
 
 from programGreedy import Greedy
 from programACO import ACO
-from programEksak import TSPExactSolver
+from programEksak import Eksak
 
 BIAYA_SERVER_PER_MS = 50.0
 RASIO_PENUH = 0.05
@@ -49,10 +49,6 @@ def load_data(jarak_file, berat_file, skenario_file):
                     jarak_row.append(float(v))
             matrix.append(jarak_row)
 
-    # ---------------------------------------------------------
-    # ALGORITMA FLOYD-WARSHALL (All-Pairs Shortest Path)
-    # Otomatis menghitung rute putar balik untuk mengatasi jalan buntu (inf)
-    # ---------------------------------------------------------
     n = len(nodes)
     for k in range(n):
         for i in range(n):
@@ -91,23 +87,21 @@ def main():
     berat_file = os.path.join(base_dir, 'data', 'berat_paket.csv')
     skenario_file = os.path.join(base_dir, 'data', 'skenario_ekonomi.csv')
 
-    print("Memuat data CSV....")
     try:
         nodes, matrix, berat_paket, total_berat, skenario = load_data(jarak_file, berat_file, skenario_file)
     except FileNotFoundError as e:
         print(f"Error: {e}")
         return
 
-    print("Data berhasil dimuat. Memulai komparasi algoritma...\n")
 
     daftar_algoritma = [
         ("GREEDY (Heuristik Cepat)", Greedy(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG)),
         ("ACO (Metaheuristik)", ACO(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG, num_ants=20, iterations=50)),
-        ("DFS PRUNING (Eksak)", TSPExactSolver(nodes, matrix))
+        ("DFS PRUNING (Eksak)", Eksak(nodes, matrix, berat_paket, total_berat, RASIO_PENUH, RASIO_KOSONG))
     ]
 
     for nama_algo, solver in daftar_algoritma:
-        print(f">>> Menjalankan {nama_algo}...")
+        print(f">>> {nama_algo}...")
         
         start_time = time.perf_counter()
         best_path_indices, min_dist = solver.solve()

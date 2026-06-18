@@ -9,42 +9,38 @@ class ACO:
         self.berat_paket = berat_paket
         self.total_berat = total_berat
         
-        # Simpan rasio yang dikirim dari program.py
         self.rasio_penuh = rasio_penuh
         self.rasio_kosong = rasio_kosong
         
-        # Parameter ACO
         self.num_ants = num_ants
         self.iterations = iterations
-        self.alpha = 1.0  # Bobot Feromon
-        self.beta = 2.0   # Bobot Heuristik (BBM)
+        self.alpha = 1.0 
+        self.beta = 2.0
         self.evaporation = 0.5
         
         # Matriks Feromon awal
-        self.pheromone = [[1.0 for _ in range(self.num_nodes)] for _ in range(self.num_nodes)]
+        self.pheromone = [[1.0 for j in range(self.num_nodes)] for i in range(self.num_nodes)]
 
     def solve(self):
-        best_path_global = None
-        min_fuel_global = float('inf')
-        best_dist_global = 0.0
+        jalur_terpendek = None
+        min_bbm = float('inf')
+        jarak = 0.0
         
-        # Gunakan atribut rasio milik class ini
         selisih_rasio = self.rasio_penuh - self.rasio_kosong
 
-        for _ in range(self.iterations):
-            all_paths = []
+        for iterasi in range(self.iterations):
+            all_jalur = []
             
-            # Setiap semut membangun rute
             for ant in range(self.num_ants):
-                path = [0]
+                jalur = [0]
                 visited = {0}
                 current_node = 0
                 current_weight = self.total_berat
-                ant_fuel = 0.0
-                ant_dist = 0.0
+                ant_bbm = 0.0
+                ant_jarak = 0.0
                 
-                while len(path) < self.num_nodes:
-                    rasio_saat_ini = self.rasio_kosong + (selisih_rasio * (current_weight / self.total_berat))
+                while len(jalur) < self.num_nodes:
+                    rasio = self.rasio_kosong + (selisih_rasio * (current_weight / self.total_berat))
                     
                     probs = []
                     total_prob = 0.0
@@ -53,7 +49,7 @@ class ACO:
                     for next_node in range(self.num_nodes):
                         if next_node not in visited and self.matrix[current_node][next_node] != float('inf'):
                             jarak = self.matrix[current_node][next_node]
-                            biaya_bbm = jarak * rasio_saat_ini
+                            biaya_bbm = jarak * rasio
                             
                             # Heuristik ACO: 1 / biaya_bbm
                             eta = 1.0 / biaya_bbm if biaya_bbm > 0 else 1.0
@@ -64,56 +60,59 @@ class ACO:
                             total_prob += p
                     
                     # Seleksi roulette wheel berdasarkan probabilitas
-                    rand_val = random.uniform(0, total_prob)
+                    val = random.uniform(0, total_prob)
                     cumulative = 0.0
                     chosen_next = None
                     
                     for next_node, p, jrk, bbm in probs:
                         cumulative += p
-                        if cumulative >= rand_val:
+                        if cumulative >= val:
                             chosen_next = next_node
-                            ant_dist += jrk
-                            ant_fuel += bbm
+                            ant_jarak += jrk
+                            ant_bbm += bbm
                             break
-                    
-                    # Antisipasi rounding error jika probabilitas tidak bulat
-                    if chosen_next is None and probs:
-                        chosen_next = probs[-1][0]
-                        ant_dist += probs[-1][2]
-                        ant_fuel += probs[-1][3]
-                        
-                    path.append(chosen_next)
+
+                    # antisipasi dead end
+                    if chosen_next is None:
+                        ant_bbm = float('inf') 
+                        break 
+
+                    jalur.append(chosen_next)
                     visited.add(chosen_next)
                     current_node = chosen_next
                     nama_lokasi = self.nodes[chosen_next]
                     current_weight -= self.berat_paket.get(nama_lokasi, 0)
                 
-                # Semut pulang ke Hub
-                jarak_pulang = self.matrix[current_node][0]
-                rasio_pulang = self.rasio_kosong + (selisih_rasio * (current_weight / self.total_berat))
-                ant_dist += jarak_pulang
-                ant_fuel += (jarak_pulang * rasio_pulang)
-                path.append(0)
+                # Semut hanya boleh pulang jika berhasil mengunjungi semua kota
+                if len(jalur) == self.num_nodes:
+                    # Cek apakah ada jalan langsung dari node terakhir kembali ke Hub
+                    if self.matrix[current_node][0] != float('inf'):
+                        jarak_pulang = self.matrix[current_node][0]
+                        rasio_pulang = self.rasio_kosong + (selisih_rasio * (current_weight / self.total_berat))
+                        ant_jarak += jarak_pulang
+                        ant_bbm += (jarak_pulang * rasio_pulang)
+                        jalur.append(0)
+                    else:
+                        ant_bbm = float('inf') # Gagal karena tidak ada jalan pulang ke Hub
                 
-                all_paths.append((path, ant_fuel))
+                all_jalur.append((jalur, ant_bbm))
                 
-                if ant_fuel < min_fuel_global:
-                    min_fuel_global = ant_fuel
-                    best_path_global = path[:]
-                    best_dist_global = ant_dist
+                if ant_bbm < min_bbm:
+                    min_bbm = ant_bbm
+                    jalur_terpendek = jalur[:]
+                    jarak = ant_jarak
             
-            # Evaporasi feromon
             for i in range(self.num_nodes):
                 for j in range(self.num_nodes):
                     self.pheromone[i][j] *= (1.0 - self.evaporation)
             
             # Tambahkan feromon baru berdasarkan kualitas rute (BBM)
-            for path_k, fuel in all_paths:
-                deposit = 1.0 / fuel
-                # Iterasi sebanyak panjang rute dikurangi 1 agar tidak out-of-bounds
-                for i in range(len(path_k) - 1):
-                    u = path_k[i]
-                    v = path_k[i+1]
+            for jalur_k, bbbm in all_jalur:
+                deposit = 1.0 / bbbm
+
+                for i in range(len(jalur_k) - 1):
+                    u = jalur_k[i]
+                    v = jalur_k[i+1]
                     self.pheromone[u][v] += deposit
                     
-        return best_path_global, best_dist_global
+        return jalur_terpendek, jarak
