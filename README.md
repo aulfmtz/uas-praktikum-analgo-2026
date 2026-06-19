@@ -14,9 +14,9 @@
 Program ini dikembangkan menggunakan **Python+**.
 
 ### Perintah Eksekusi CLI
-Jalankan program dari direktori utama dengan memilih salah satu skenario ekonomi berikut:
+Program dirancang untuk berjalan secara otomatis (Orchestrator). Cukup jalankan perintah berikut dari direktori utama:
 ```bash
-python src/program.py 
+python src/program.py
 ```
 ---
 
@@ -27,12 +27,12 @@ Bagian ini memodelkan data geografis dan berat logistik pengiriman barang secara
 ### Skenario Geografis:
 Dataset memodelkan rute pengantaran kurir di daerah perkotaan Bandung yang terdiri atas **1 Gudang Pusat (Hub)** dan **10 Pelanggan** (Total 11 Titik).
 *   **Hub (Indeks 0):** Gudang Pusat (Awal & Akhir rute).
-*   **Customer (Indeks 1 - 12)** 
+*   **Customer (Indeks 1 - 10)** 
 
 ### Struktur File CSV 
-* `data/berat_paket.csv`:
-* `data/matriks_jarak.csv`:
-* `data/skenario_ekonomi.csv`:
+* `data/berat_paket.csv`: Beban muatan paket tiap lokasi (dalam kg) untuk menghitung rasio bensin dinamis. Total muatan kurir saat berangkat adalah *22.0 kg*.
+* `data/matriks_jarak.csv`: Matriks ketetanggaan 2D berukuran $11 \times 11$ berisi jarak fisik antar lokasi dalam kilometer (km), dengan nilai `inf` untuk jalur yang terputus.
+* `data/skenario_ekonomi.csv`: Parameter tarif harga BBM untuk masing-masing skenario pengujian, yaitu Subsidi (*Rp 5.000/L*) dan Krisis (*Rp 20.000/L*).
 
 ---
 
@@ -50,27 +50,29 @@ Kami membandingkan 2 pendekatan algoritmik yang bertolak belakang untuk menganal
 
 ## 4. Analisis Kompleksitas (Big-O)
 
-### A. Algoritma Greedy
-1.  **Kompleksitas Waktu: O(N^2)**
-    Memiliki satu *loop* utama untuk mengunjungi N-1 pelanggan. Di setiap iterasi, algoritma memeriksa N kandidat untuk mencari jarak terdekat. 
-2.  **Kompleksitas Ruang: O(N)**
-    Hanya mengalokasikan memori untuk variabel penanda `visited` dan *array* penyimpan `rute`.
+### A. Kompleksitas Algoritma Greedy
+1.  *Kompleksitas Waktu: $\mathcal{O}(N^2)$*
+    * Penelusuran: Algoritma memiliki satu *loop* utama untuk mengunjungi $N - 1$ pelanggan. Di setiap iterasi, algoritma memeriksa $N$ kandidat untuk mencari jarak terdekat. Total operasi dasar:
+        $$(N-1) \times N \approx N^2$$
+2.  *Kompleksitas Ruang (Memori): $\mathcal{O}(N)$*
+    * Penelusuran: Memori hanya dialokasikan untuk variabel penanda `visited` dan *array* penyimpan `rute`.
 
-### B. Algoritma DFS Pruning
-1.  **Kompleksitas Waktu: O(N!) (Worst Case)**
-    Meskipun *pruning* memotong banyak cabang pencarian secara signifikan, batas atas komputasi teoritisnya tetap faktorial karena mengevaluasi permutasi rute dari titik ke titik.
-2.  **Kompleksitas Ruang: O(N)**
-    Memori dialokasikan untuk memelihara tumpukan rekursi (*Call Stack*) sedalam N pelanggan.
+### B. Kompleksitas Algoritma DFS Pruning
+1.  *Kompleksitas Waktu: $\mathcal{O}(N!)$ (Worst Case)*
+    * Penelusuran: Meskipun teknik *pruning* memotong banyak cabang pencarian secara signifikan, batas atas komputasi teoritisnya tetap faktorial karena algoritma mengevaluasi permutasi rute dari titik ke titik.
+2.  *Kompleksitas Ruang (Memori): $\mathcal{O}(N)$*
+    * Penelusuran: Memori dialokasikan untuk memelihara tumpukan rekursi (*Call Stack*) sedalam $N$ pelanggan.
 
 ---
 
 ## 5. Ringkasan Hasil Uji
 
-Hasil pengujian eksekusi terminal CLI untuk kedua skenario tersimpan secara detail di folder docs:
-/docs/screenshot_output.png
+### Output Terminal
+Hasil pengujian eksekusi terminal CLI untuk kedua skenario tersimpan secara detail di folder `docs`:
+
 ![Screenshot Output Terminal](docs/screenshot_output.png)
 
-### Tabel Komparasi Utama :
+### Tabel Komparasi Utama
 
 Tabel di bawah ini merupakan komparasi metrik finansial dan algoritmik (*N = 11*):
 
@@ -103,5 +105,6 @@ Berdasarkan kalkulasi *Total Cost of Ownership* (TCO), rekomendasi arsitektur al
 
     Namun, jika kedepannya pesanan pelanggan bertambah sangat banyak dan peta jalan semakin rumit, algoritma Greedy berisiko mulai kewalahan dan keliru memilih rute karena sifatnya yang hanya melihat jarak terdekat sesaat. Saat skala datanya sudah membesar, algoritma DFS mungkin bisa lebih berpotensi, karena ia selalu teliti mengecek setiap kemungkinan jalur untuk menjamin bensin yang paling irit.
     
-    *Titik Impas BBM = (Biaya Server DFS - Biaya Server Greedy) / (BBM Greedy (L) - BBM DFS (L))*
-    *Titik Impas BBM = Rp [HASIL_HITUNGAN_MANUAL_ANDA] / Liter*
+    * *Titik Impas BBM = (Biaya Server DFS - Biaya Server Greedy) / (BBM Greedy - BBM DFS)*
+    * *Titik Impas BBM = (Rp 305.08 - Rp 1.27) / (0.9982 L - 0.9982 L)*
+    * *Titik Impas BBM = Rp 303.81 / 0 L = Tak Terhingga (Tidak Memungkinkan)*
