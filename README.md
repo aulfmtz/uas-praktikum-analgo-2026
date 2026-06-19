@@ -53,9 +53,7 @@ Kami membandingkan 2 pendekatan algoritmik yang bertolak belakang untuk menganal
 ### A. Kompleksitas Algoritma Greedy
 1.  *Kompleksitas Waktu:* $\mathcal{O}(N^2)$
     * Penelusuran: Algoritma memiliki satu *loop* utama untuk mengunjungi $N - 1$ pelanggan. Di setiap iterasi, algoritma memeriksa $N$ kandidat untuk mencari jarak terdekat. Total operasi dasar:
-    $$ 
-    (N-1) \times N \approx N^2
-    $$
+    $$ (N-1) \times N \approx N^2 $$
 2.  *Kompleksitas Ruang (Memori):* $\mathcal{O}(N)$
     * Penelusuran: Memori hanya dialokasikan untuk variabel penanda `visited` dan *array* penyimpan `rute`.
 
