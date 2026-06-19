@@ -51,16 +51,18 @@ Kami membandingkan 2 pendekatan algoritmik yang bertolak belakang untuk menganal
 ## 4. Analisis Kompleksitas (Big-O)
 
 ### A. Kompleksitas Algoritma Greedy
-1.  *Kompleksitas Waktu: $\mathcal{O}(N^2)$*
+1.  *Kompleksitas Waktu:* $\mathcal{O}(N^2)$
     * Penelusuran: Algoritma memiliki satu *loop* utama untuk mengunjungi $N - 1$ pelanggan. Di setiap iterasi, algoritma memeriksa $N$ kandidat untuk mencari jarak terdekat. Total operasi dasar:
-        $$(N-1) \times N \approx N^2$$
-2.  *Kompleksitas Ruang (Memori): $\mathcal{O}(N)$*
+    $$ 
+    (N-1) \times N \approx N^2
+    $$
+2.  *Kompleksitas Ruang (Memori):* $\mathcal{O}(N)$
     * Penelusuran: Memori hanya dialokasikan untuk variabel penanda `visited` dan *array* penyimpan `rute`.
 
 ### B. Kompleksitas Algoritma DFS Pruning
-1.  *Kompleksitas Waktu: $\mathcal{O}(N!)$ (Worst Case)*
+1.  *Kompleksitas Waktu:* $\mathcal{O}(N!)$ *(Worst Case)*
     * Penelusuran: Meskipun teknik *pruning* memotong banyak cabang pencarian secara signifikan, batas atas komputasi teoritisnya tetap faktorial karena algoritma mengevaluasi permutasi rute dari titik ke titik.
-2.  *Kompleksitas Ruang (Memori): $\mathcal{O}(N)$*
+2.  *Kompleksitas Ruang (Memori):* $\mathcal{O}(N)$
     * Penelusuran: Memori dialokasikan untuk memelihara tumpukan rekursi (*Call Stack*) sedalam $N$ pelanggan.
 
 ---
